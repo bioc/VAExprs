@@ -1,6 +1,3 @@
-if (tensorflow::tf$executing_eagerly())
-    tensorflow::tf$compat$v1$disable_eager_execution()
-
 fit_vae <- function(object = NULL,
                     x_train = NULL,
                     x_val = NULL,
@@ -22,6 +19,9 @@ fit_vae <- function(object = NULL,
                     use_generator = FALSE,
                     optimizer = "adam",
                     validation_split = 0, ...) {
+    if (tensorflow::tf$executing_eagerly())
+        tensorflow::tf$compat$v1$disable_eager_execution()
+    
     result <- NULL
     result$preprocessing <- NULL
     x_val <- NULL
