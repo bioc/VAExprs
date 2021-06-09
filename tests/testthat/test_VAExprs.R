@@ -35,13 +35,53 @@ vae_result <- fit_vae(x_train = x_train,
                                                         activation = "sigmoid")),
                       epochs = epochs, batch_size = batch_size,
                       validation_split = 0.5,
-                      use_generator = FALSE)
+                      use_generator = TRUE)
+
+vae_result_preprocessing <- fit_vae(preprocessing = vae_result$preprocessing,
+                                    encoder_layers = list(layer_input(shape = c(original_dim)),
+                                                          layer_dense(units = intermediate_dim,
+                                                                      activation = "relu")),
+                                    decoder_layers = list(layer_dense(units = intermediate_dim,
+                                                                      activation = "relu"),
+                                                          layer_dense(units = original_dim,
+                                                                      activation = "sigmoid")),
+                                    epochs = epochs, batch_size = batch_size,
+                                    validation_split = 0.5,
+                                    use_generator = TRUE)
+
+gen_sample_result <- gen_exprs(vae_result, num_samples = 100)
+
+
+
+test_that("fit_vae: fit_vae yields a model", {
+  expect_type(vae_result$model, "closure")
+})
+
+
+
+test_that("fit_vae: fit_vae yields an encoder", {
+  expect_type(vae_result$encoder, "closure")
+})
+
+
+
+test_that("fit_vae: fit_vae yields a decoder", {
+  expect_type(vae_result$decoder, "closure")
+})
 
 
 
 test_that("fit_vae: fit_vae from preprocessed result", {
+  expect_type(vae_result_preprocessing, "list")
+})
+
+
+
+test_that("fit_vae: add layer for encoder", {
   expect_type(fit_vae(x_train = x_train,
                       encoder_layers = list(layer_input(shape = c(original_dim)),
+                                            layer_dense(units = intermediate_dim,
+                                                        activation = "relu"),
                                             layer_dense(units = intermediate_dim,
                                                         activation = "relu")),
                       decoder_layers = list(layer_dense(units = intermediate_dim,
@@ -50,7 +90,130 @@ test_that("fit_vae: fit_vae from preprocessed result", {
                                                         activation = "sigmoid")),
                       epochs = epochs, batch_size = batch_size,
                       validation_split = 0.5,
-                      use_generator = FALSE), "list")
+                      use_generator = TRUE), "list")
 })
 
 
+
+test_that("fit_vae: dimension of latent vector", {
+  expect_type(fit_vae(x_train = x_train,
+                      encoder_layers = list(layer_input(shape = c(original_dim)),
+                                            layer_dense(units = intermediate_dim,
+                                                        activation = "relu"),
+                                            layer_dense(units = intermediate_dim,
+                                                        activation = "relu")),
+                      decoder_layers = list(layer_dense(units = intermediate_dim,
+                                                        activation = "relu"),
+                                            layer_dense(units = original_dim,
+                                                        activation = "sigmoid")),
+                      latent_dim = 3,
+                      epochs = epochs, batch_size = batch_size,
+                      validation_split = 0.5,
+                      use_generator = TRUE), "list")
+})
+
+
+
+test_that("fit_vae: miss an encoder", {
+  expect_error(
+    fit_vae(x_train = x_train,
+            decoder_layers = list(layer_dense(units = intermediate_dim,
+                                              activation = "relu"),
+                                  layer_dense(units = original_dim,
+                                              activation = "sigmoid")),
+            epochs = epochs, batch_size = batch_size,
+            validation_split = 0.5,
+            use_generator = TRUE)
+  )
+})
+
+
+
+test_that("fit_vae: negative regularization parameter", {
+  expect_error(
+    fit_vae(x_train = x_train,
+            encoder_layers = list(layer_input(shape = c(original_dim)),
+                                  layer_dense(units = intermediate_dim,
+                                              activation = "relu")),
+            decoder_layers = list(layer_dense(units = intermediate_dim,
+                                              activation = "relu"),
+                                  layer_dense(units = original_dim,
+                                              activation = "sigmoid")),
+            epochs = epochs, batch_size = batch_size,
+            validation_split = 0.5,
+            use_generator = TRUE,
+            regularization = -1)
+  )
+})
+
+
+
+test_that("fit_vae: miss epochs", {
+  expect_error(
+    fit_vae(x_train = x_train,
+            encoder_layers = list(layer_input(shape = c(original_dim)),
+                                  layer_dense(units = intermediate_dim,
+                                              activation = "relu")),
+            decoder_layers = list(layer_dense(units = intermediate_dim,
+                                              activation = "relu"),
+                                  layer_dense(units = original_dim,
+                                              activation = "sigmoid")),
+            batch_size = batch_size,
+            validation_split = 0.5,
+            use_generator = TRUE)
+  )
+})
+
+
+
+test_that("fit_vae: miss batch_size", {
+  expect_error(
+    fit_vae(x_train = x_train,
+            encoder_layers = list(layer_input(shape = c(original_dim)),
+                                  layer_dense(units = intermediate_dim,
+                                              activation = "relu")),
+            decoder_layers = list(layer_dense(units = intermediate_dim,
+                                              activation = "relu"),
+                                  layer_dense(units = original_dim,
+                                              activation = "sigmoid")),
+            epochs = epochs,
+            validation_split = 0.5,
+            use_generator = TRUE)
+  )
+})
+
+
+
+test_that("plot_vae: output", {
+  expect_visible(plot_vae(vae_result$model))
+})
+
+
+
+test_that("plot_vae: model is required", {
+  expect_error(plot_model(vae_result))
+})
+
+
+
+test_that("gen_exprs: result", {
+  expect_type(gen_sample_result, "list")
+})
+
+
+
+test_that("gen_exprs: miss number of samples", {
+  expect_error(gen_exprs(vae_result))
+})
+
+
+
+test_that("plot_aug: output", {
+  expect_visible(plot_aug(gen_sample_result, "PCA"))
+})
+
+
+
+test_that("plot_aug: miss plot_fun", {
+  expect_error(plot_aug(gen_sample_result))
+})
