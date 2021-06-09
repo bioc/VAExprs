@@ -37,14 +37,20 @@ vae_result <- fit_vae(x_train = x_train,
                       validation_split = 0.5,
                       use_generator = FALSE)
 
-vae_result_preprocessing <- fit_vae(preprocessing = vae_result$preprocessing,
-                                    encoder_layers = list(layer_input(shape = c(original_dim)),
-                                                          layer_dense(units = intermediate_dim,
-                                                                      activation = "relu")),
-                                    decoder_layers = list(layer_dense(units = intermediate_dim,
-                                                                      activation = "relu"),
-                                                          layer_dense(units = original_dim,
-                                                                      activation = "sigmoid")),
-                                    epochs = epochs, batch_size = batch_size,
-                                    validation_split = 0.5,
-                                    use_generator = FALSE)
+
+
+test_that("fit_vae: fit_vae from preprocessed result", {
+  expect_type(fit_vae(x_train = x_train,
+                      encoder_layers = list(layer_input(shape = c(original_dim)),
+                                            layer_dense(units = intermediate_dim,
+                                                        activation = "relu")),
+                      decoder_layers = list(layer_dense(units = intermediate_dim,
+                                                        activation = "relu"),
+                                            layer_dense(units = original_dim,
+                                                        activation = "sigmoid")),
+                      epochs = epochs, batch_size = batch_size,
+                      validation_split = 0.5,
+                      use_generator = FALSE), "list")
+})
+
+
