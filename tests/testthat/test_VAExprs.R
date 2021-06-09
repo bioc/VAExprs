@@ -1,3 +1,6 @@
+if (tensorflow::tf$executing_eagerly())
+  tensorflow::tf$compat$v1$disable_eager_execution()
+
 set.seed(1)
 g <- 3
 n <- 100
