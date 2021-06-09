@@ -166,7 +166,7 @@ fit_vae <- function(object = NULL,
     vae_loss <- function(x_true, x_pred) {
         xent_loss <- (original_dim / 1.0) * loss_binary_crossentropy(x_true, x_pred)
         kl_loss <- -0.5 * k_mean(1 + z_log_stddev - k_square(z_mean) - k_exp(z_log_stddev), axis = -1L)
-        xent_loss + regularization * kl_loss
+        xent_loss + k_constant(regularization) * kl_loss
     }
     
     model %>% keras::compile(optimizer = optimizer, loss = vae_loss)

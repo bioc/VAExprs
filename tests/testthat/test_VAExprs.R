@@ -35,7 +35,7 @@ vae_result <- fit_vae(x_train = x_train,
                                                         activation = "sigmoid")),
                       epochs = epochs, batch_size = batch_size,
                       validation_split = 0.5,
-                      use_generator = TRUE)
+                      use_generator = FALSE)
 
 vae_result_preprocessing <- fit_vae(preprocessing = vae_result$preprocessing,
                                     encoder_layers = list(layer_input(shape = c(original_dim)),
@@ -47,7 +47,7 @@ vae_result_preprocessing <- fit_vae(preprocessing = vae_result$preprocessing,
                                                                       activation = "sigmoid")),
                                     epochs = epochs, batch_size = batch_size,
                                     validation_split = 0.5,
-                                    use_generator = TRUE)
+                                    use_generator = FALSE)
 
 gen_sample_result <- gen_exprs(vae_result, num_samples = 100)
 
@@ -90,7 +90,7 @@ test_that("fit_vae: add layer for encoder", {
                                                         activation = "sigmoid")),
                       epochs = epochs, batch_size = batch_size,
                       validation_split = 0.5,
-                      use_generator = TRUE), "list")
+                      use_generator = FALSE), "list")
 })
 
 
@@ -109,7 +109,7 @@ test_that("fit_vae: dimension of latent vector", {
                       latent_dim = 3,
                       epochs = epochs, batch_size = batch_size,
                       validation_split = 0.5,
-                      use_generator = TRUE), "list")
+                      use_generator = FALSE), "list")
 })
 
 
@@ -123,7 +123,7 @@ test_that("fit_vae: miss an encoder", {
                                               activation = "sigmoid")),
             epochs = epochs, batch_size = batch_size,
             validation_split = 0.5,
-            use_generator = TRUE)
+            use_generator = FALSE)
   )
 })
 
@@ -141,7 +141,7 @@ test_that("fit_vae: negative regularization parameter", {
                                               activation = "sigmoid")),
             epochs = epochs, batch_size = batch_size,
             validation_split = 0.5,
-            use_generator = TRUE,
+            use_generator = FALSE,
             regularization = -1)
   )
 })
@@ -160,7 +160,7 @@ test_that("fit_vae: miss epochs", {
                                               activation = "sigmoid")),
             batch_size = batch_size,
             validation_split = 0.5,
-            use_generator = TRUE)
+            use_generator = FALSE)
   )
 })
 
@@ -178,7 +178,7 @@ test_that("fit_vae: miss batch_size", {
                                               activation = "sigmoid")),
             epochs = epochs,
             validation_split = 0.5,
-            use_generator = TRUE)
+            use_generator = FALSE)
   )
 })
 
