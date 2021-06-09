@@ -53,21 +53,21 @@ gen_sample_result <- gen_exprs(vae_result, num_samples = 100)
 
 
 
-#test_that("fit_vae: fit_vae yields a model", {
-#  expect_type(vae_result$model, "closure")
-#})
+test_that("fit_vae: fit_vae yields a model", {
+  expect_type(vae_result$model, "closure")
+})
 
 
 
-#test_that("fit_vae: fit_vae yields an encoder", {
-#  expect_type(vae_result$encoder, "closure")
-#})
+test_that("fit_vae: fit_vae yields an encoder", {
+  expect_type(vae_result$encoder, "closure")
+})
 
 
 
-#test_that("fit_vae: fit_vae yields a decoder", {
-#  expect_type(vae_result$decoder, "closure")
-#})
+test_that("fit_vae: fit_vae yields a decoder", {
+  expect_type(vae_result$decoder, "closure")
+})
 
 
 
