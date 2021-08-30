@@ -427,7 +427,7 @@ gen_exprs <- function(x,
     
     
     ### post-processing
-    message("post-processing")
+    message("post-processing...")
     # denormalization
     if (!is.null(minmax)) {
         x_gen <- gradDescent::minmaxDescaling(data.frame(x_gen), minmax$scalingParameter)
@@ -473,10 +473,11 @@ plot_aug <- function(x, plot_fun, ...) {
         colnames(group) <- "group"
     }
     
+    X <- t(as.matrix(rbind(as.matrix(x_train), as.matrix(x_gen))))
+    colnames(X) <- group
+    
     sce <- SingleCellExperiment::SingleCellExperiment(
-        assays = list(
-            counts = t(as.matrix(rbind(as.matrix(x_train), as.matrix(x_gen))))
-        ), 
+        assays = list(counts = X), 
         colData = group
     )
     sce <- scater::logNormCounts(sce)
