@@ -474,7 +474,7 @@ plot_aug <- function(x, plot_fun, ...) {
     }
     
     X <- t(as.matrix(rbind(as.matrix(x_train), as.matrix(x_gen))))
-    colnames(X) <- group
+    colnames(X) <- rownames(group)
     
     sce <- SingleCellExperiment::SingleCellExperiment(
         assays = list(counts = X), 
