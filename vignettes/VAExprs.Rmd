@@ -47,90 +47,100 @@ One can apply conditioning to variational autoencoders in order to obtain some i
 Consider artificial data. The data consist of 1000 genes and three groups of 100 samples. Each group has 100 differentially expressed genes.
 
 ```{r, eval=TRUE}
-library(VAExprs)
-
-### simulate differentially expressed genes
-set.seed(1)
-g <- 3
-n <- 100
-m <- 1000
-mu <- 5
-sigma <- 5
-mat <- matrix(rnorm(n*m*g, mu, sigma), m, n*g)
-rownames(mat) <- paste0("gene", seq_len(m))
-colnames(mat) <- paste0("cell", seq_len(n*g))
-group <- factor(sapply(seq_len(g), function(x) { 
-    rep(paste0("group", x), n)
-}))
-names(group) <- colnames(mat)
-mu_upreg <- 6
-sigma_upreg <- 10
-deg <- 100
-for (i in seq_len(g)) {
-    mat[(deg*(i-1) + 1):(deg*i), group == paste0("group", i)] <- 
-        mat[1:deg, group==paste0("group", i)] + rnorm(deg, mu_upreg, sigma_upreg)
+if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+    library(VAExprs)
+    
+    ### simulate differentially expressed genes
+    set.seed(1)
+    g <- 3
+    n <- 100
+    m <- 1000
+    mu <- 5
+    sigma <- 5
+    mat <- matrix(rnorm(n*m*g, mu, sigma), m, n*g)
+    rownames(mat) <- paste0("gene", seq_len(m))
+    colnames(mat) <- paste0("cell", seq_len(n*g))
+    group <- factor(sapply(seq_len(g), function(x) { 
+        rep(paste0("group", x), n)
+    }))
+    names(group) <- colnames(mat)
+    mu_upreg <- 6
+    sigma_upreg <- 10
+    deg <- 100
+    for (i in seq_len(g)) {
+        mat[(deg*(i-1) + 1):(deg*i), group == paste0("group", i)] <- 
+            mat[1:deg, group==paste0("group", i)] + rnorm(deg, mu_upreg, sigma_upreg)
+    }
+    # positive expression only
+    mat[mat < 0] <- 0
+    x_train <- as.matrix(t(mat))
+    
+    # heatmap
+    heatmap(mat, Rowv = NA, Colv = NA, 
+            col = colorRampPalette(c('green', 'red'))(100), 
+            scale = "none")
 }
-# positive expression only
-mat[mat < 0] <- 0
-x_train <- as.matrix(t(mat))
-
-# heatmap
-heatmap(mat, Rowv = NA, Colv = NA, 
-        col = colorRampPalette(c('green', 'red'))(100), 
-        scale = "none")
 ```
 
 The VAE model can be built by using the function "fit_vae" with gene expression data and the cell annotation from the object "sce". The overall loss function of the VAE is expressed as a weighted sum of the reconstruction loss and the regularization loss. The reconstruction loss is the binary cross-entropy loss between the input and output and the regularization loss is simply the Kullback-Leibler divergence measure. Note that the same dataset is used for training and validation.
 
 ```{r, eval=TRUE}
-# model parameters
-batch_size <- 32
-original_dim <- 1000
-intermediate_dim <- 512
-epochs <- 100
-
-# VAE
-vae_result <- fit_vae(x_train = x_train, x_val = x_train,
-                    encoder_layers = list(layer_input(shape = c(original_dim)),
-                                        layer_dense(units = intermediate_dim,
-                                                    activation = "relu")),
-                    decoder_layers = list(layer_dense(units = intermediate_dim,
-                                                    activation = "relu"),
-                                        layer_dense(units = original_dim,
-                                                    activation = "sigmoid")),
-                    epochs = epochs, batch_size = batch_size,
-                    use_generator = FALSE,
-                    callbacks = keras::callback_early_stopping(
-                        monitor = "val_loss",
-                        patience = 10,
-                        restore_best_weights = TRUE))
+if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+    # model parameters
+    batch_size <- 32
+    original_dim <- 1000
+    intermediate_dim <- 512
+    epochs <- 100
+    
+    # VAE
+    vae_result <- fit_vae(x_train = x_train, x_val = x_train,
+                        encoder_layers = list(layer_input(shape = c(original_dim)),
+                                            layer_dense(units = intermediate_dim,
+                                                        activation = "relu")),
+                        decoder_layers = list(layer_dense(units = intermediate_dim,
+                                                        activation = "relu"),
+                                            layer_dense(units = original_dim,
+                                                        activation = "sigmoid")),
+                        epochs = epochs, batch_size = batch_size,
+                        use_generator = FALSE,
+                        callbacks = keras::callback_early_stopping(
+                            monitor = "val_loss",
+                            patience = 10,
+                            restore_best_weights = TRUE))
+}
 ```
 
 The function "plot_vae" draws the plot for model architecture.
 
 ```{r, eval=TRUE}
-# model architecture
-plot_vae(vae_result$model)
+if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+    # model architecture
+    plot_vae(vae_result$model)
+}
 ```
 
 The function "gen_exprs" can generate samples with expression data by using the trained model.
 
 ```{r, eval=TRUE}
-# sample generation
-set.seed(1)
-gen_sample_result <- gen_exprs(vae_result, num_samples = 100)
-
-# heatmap
-heatmap(cbind(t(x_train), t(gen_sample_result$x_gen)),
-        col = colorRampPalette(c('green', 'red'))(100),
-        Rowv=NA)
+if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+    # sample generation
+    set.seed(1)
+    gen_sample_result <- gen_exprs(vae_result, num_samples = 100)
+    
+    # heatmap
+    heatmap(cbind(t(x_train), t(gen_sample_result$x_gen)),
+            col = colorRampPalette(c('green', 'red'))(100),
+            Rowv=NA)
+}
 ```
 
 The function "plot_aug" uses reduced dimension plots for augmented data visualization.
 
 ```{r, eval=TRUE}
-# plot for augmented data
-plot_aug(gen_sample_result, "PCA")
+if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+    # plot for augmented data
+    plot_aug(gen_sample_result, "PCA")
+}
 ```
 
 
@@ -145,58 +155,62 @@ plot_aug(gen_sample_result, "PCA")
 The "yan" data set is single-cell RNA sequencing data with 20214 genes and 90 cells from human preimplantation embryos and embryonic stem cells at different passages. The rows in the dataset correspond to genes and columns correspond to cells. The "SingleCellExperiment" class can be used to store and manipulate single-cell genomics data. It extends the "RangedSummarizedExperiment" class and follows similar conventions. The object "sce" can be created by the data "yan" with cell type annotation "ann".
 
 ```{r, eval=TRUE}
-library(VAExprs)
-library(SC3)
-library(SingleCellExperiment)
-
-# create a SingleCellExperiment object
-sce <- SingleCellExperiment::SingleCellExperiment(
-    assays = list(counts = as.matrix(yan)),
-    colData = ann
-)
-
-# define feature names in feature_symbol column
-rowData(sce)$feature_symbol <- rownames(sce)
-# remove features with duplicated names
-sce <- sce[!duplicated(rowData(sce)$feature_symbol), ]
-# remove genes that are not expressed in any samples
-sce <- sce[which(rowMeans(assay(sce)) > 0),]
-dim(assay(sce))
-
-# model parameters
-batch_size <- 32
-original_dim <- 19595
-intermediate_dim <- 256
-epochs <- 100
-
-# model
-cvae_result <- fit_vae(object = sce,
-                    encoder_layers = list(layer_input(shape = c(original_dim)),
-                                        layer_dense(units = intermediate_dim,
-                                                    activation = "relu")),
-                    decoder_layers = list(layer_dense(units = intermediate_dim,
-                                                    activation = "relu"),
-                                        layer_dense(units = original_dim,
-                                                    activation = "sigmoid")),
-                    epochs = epochs, batch_size = batch_size,
-                    use_generator = TRUE,
-                    callbacks = keras::callback_early_stopping(
-                        monitor = "loss",
-                        patience = 20,
-                        restore_best_weights = TRUE))
-
-# model architecture
-plot_vae(cvae_result$model)
+if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+    library(VAExprs)
+    library(SC3)
+    library(SingleCellExperiment)
+    
+    # create a SingleCellExperiment object
+    sce <- SingleCellExperiment::SingleCellExperiment(
+        assays = list(counts = as.matrix(yan)),
+        colData = ann
+    )
+    
+    # define feature names in feature_symbol column
+    rowData(sce)$feature_symbol <- rownames(sce)
+    # remove features with duplicated names
+    sce <- sce[!duplicated(rowData(sce)$feature_symbol), ]
+    # remove genes that are not expressed in any samples
+    sce <- sce[which(rowMeans(assay(sce)) > 0),]
+    dim(assay(sce))
+    
+    # model parameters
+    batch_size <- 32
+    original_dim <- 19595
+    intermediate_dim <- 256
+    epochs <- 100
+    
+    # model
+    cvae_result <- fit_vae(object = sce,
+                        encoder_layers = list(layer_input(shape = c(original_dim)),
+                                            layer_dense(units = intermediate_dim,
+                                                        activation = "relu")),
+                        decoder_layers = list(layer_dense(units = intermediate_dim,
+                                                        activation = "relu"),
+                                            layer_dense(units = original_dim,
+                                                        activation = "sigmoid")),
+                        epochs = epochs, batch_size = batch_size,
+                        use_generator = TRUE,
+                        callbacks = keras::callback_early_stopping(
+                            monitor = "loss",
+                            patience = 20,
+                            restore_best_weights = TRUE))
+    
+    # model architecture
+    plot_vae(cvae_result$model)
+}
 ```
 
 ```{r, eval=TRUE}
-# sample generation
-set.seed(1)
-gen_sample_result <- gen_exprs(cvae_result, 100,
-                            batch_size, use_generator = TRUE)
-
-# plot for augmented data
-plot_aug(gen_sample_result, "PCA")
+if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+    # sample generation
+    set.seed(1)
+    gen_sample_result <- gen_exprs(cvae_result, 100,
+                                batch_size, use_generator = TRUE)
+    
+    # plot for augmented data
+    plot_aug(gen_sample_result, "PCA")
+}
 ```
 
 
