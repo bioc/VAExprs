@@ -1,4 +1,4 @@
-if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+if (keras::is_keras_available() & reticulate::py_available()) {
     set.seed(1)
     g <- 3
     n <- 100

@@ -1,7 +1,7 @@
 ---
 title: "Generating Samples of Gene Expression Data with Variational Autoencoders"
 author: "Dongmin Jung"
-date: September 28, 2021
+date: December 15, 2021
 output:
     rmarkdown::html_document:
         highlight: pygments
@@ -47,7 +47,7 @@ One can apply conditioning to variational autoencoders in order to obtain some i
 Consider artificial data. The data consist of 1000 genes and three groups of 100 samples. Each group has 100 differentially expressed genes.
 
 ```{r, eval=TRUE}
-if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+if (keras::is_keras_available() & reticulate::py_available()) {
     library(VAExprs)
     
     ### simulate differentially expressed genes
@@ -85,7 +85,7 @@ if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_mo
 The VAE model can be built by using the function "fit_vae" with gene expression data and the cell annotation from the object "sce". The overall loss function of the VAE is expressed as a weighted sum of the reconstruction loss and the regularization loss. The reconstruction loss is the binary cross-entropy loss between the input and output and the regularization loss is simply the Kullback-Leibler divergence measure. Note that the same dataset is used for training and validation.
 
 ```{r, eval=TRUE}
-if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+if (keras::is_keras_available() & reticulate::py_available()) {
     # model parameters
     batch_size <- 32
     original_dim <- 1000
@@ -113,7 +113,7 @@ if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_mo
 The function "plot_vae" draws the plot for model architecture.
 
 ```{r, eval=TRUE}
-if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+if (keras::is_keras_available() & reticulate::py_available()) {
     # model architecture
     plot_vae(vae_result$model)
 }
@@ -122,7 +122,7 @@ if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_mo
 The function "gen_exprs" can generate samples with expression data by using the trained model.
 
 ```{r, eval=TRUE}
-if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+if (keras::is_keras_available() & reticulate::py_available()) {
     # sample generation
     set.seed(1)
     gen_sample_result <- gen_exprs(vae_result, num_samples = 100)
@@ -137,7 +137,7 @@ if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_mo
 The function "plot_aug" uses reduced dimension plots for augmented data visualization.
 
 ```{r, eval=TRUE}
-if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+if (keras::is_keras_available() & reticulate::py_available()) {
     # plot for augmented data
     plot_aug(gen_sample_result, "PCA")
 }
@@ -155,7 +155,7 @@ if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_mo
 The "yan" data set is single-cell RNA sequencing data with 20214 genes and 90 cells from human preimplantation embryos and embryonic stem cells at different passages. The rows in the dataset correspond to genes and columns correspond to cells. The "SingleCellExperiment" class can be used to store and manipulate single-cell genomics data. It extends the "RangedSummarizedExperiment" class and follows similar conventions. The object "sce" can be created by the data "yan" with cell type annotation "ann".
 
 ```{r, eval=TRUE}
-if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+if (keras::is_keras_available() & reticulate::py_available()) {
     library(VAExprs)
     library(SC3)
     library(SingleCellExperiment)
@@ -202,7 +202,7 @@ if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_mo
 ```
 
 ```{r, eval=TRUE}
-if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+if (keras::is_keras_available() & reticulate::py_available()) {
     # sample generation
     set.seed(1)
     gen_sample_result <- gen_exprs(cvae_result, 100,

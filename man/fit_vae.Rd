@@ -125,7 +125,7 @@ Marouf, M., Machart, P., Bansal, V., Kilian, C., Magruder, D. S., Krebs, C. F., 
 
 
 \examples{
-if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+if (keras::is_keras_available() & reticulate::py_available()) {
     ### simulate differentially expressed genes
     set.seed(1)
     g <- 3

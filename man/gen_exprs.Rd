@@ -60,7 +60,7 @@ mclust::mclustBIC, mclust::mclustModel, mclust::sim, DeepPINCS::multiple_samplin
 
 
 \examples{
-if (keras::is_keras_available() & reticulate::py_available() & reticulate::py_module_available("rpytools")) {
+if (keras::is_keras_available() & reticulate::py_available()) {
     ### simulate differentially expressed genes
     set.seed(1)
     g <- 3
