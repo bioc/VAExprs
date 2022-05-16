@@ -1,3 +1,4 @@
+# from gradDescent
 getMinMax <- function(dataSet) {
     #create result matrix
     result <- matrix(dataSet, nrow = 2, ncol(dataSet))

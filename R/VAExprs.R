@@ -84,10 +84,10 @@ fit_vae <- function(object = NULL,
     ### normalization
     if (any(unlist(lapply(preprocessing, is.null)))) {
         message("normalizing...")
-        minmax <- gradDescent::minmaxScaling(data.frame(x_train))
+        minmax <- minmaxScaling(data.frame(x_train))
         x_train <- as.matrix(minmax$scaledDataSet)
         if (!is.null(x_val)) {
-            x_val <- as.matrix(gradDescent::minmaxScaling(data.frame(x_val))$scaledDataSet)
+            x_val <- as.matrix(minmaxScaling(data.frame(x_val))$scaledDataSet)
         }
         result$preprocessing$minmax <- minmax
     }
@@ -430,8 +430,8 @@ gen_exprs <- function(x,
     message("post-processing...")
     # denormalization
     if (!is.null(minmax)) {
-        x_gen <- gradDescent::minmaxDescaling(data.frame(x_gen), minmax$scalingParameter)
-        x_train <- gradDescent::minmaxDescaling(data.frame(x_train), minmax$scalingParameter)
+        x_gen <- minmaxDescaling(data.frame(x_gen), minmax$scalingParameter)
+        x_train <- minmaxDescaling(data.frame(x_train), minmax$scalingParameter)
     }
     
     # original label
