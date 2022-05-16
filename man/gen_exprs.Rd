@@ -55,7 +55,7 @@ Dongmin Jung
 
 
 \seealso{
-mclust::mclustBIC, mclust::mclustModel, mclust::sim, DeepPINCS::multiple_sampling_generator, gradDescent::minmaxDescaling, CatEncoders::inverse.transform
+mclust::mclustBIC, mclust::mclustModel, mclust::sim, DeepPINCS::multiple_sampling_generator, CatEncoders::inverse.transform
 }
 
 
