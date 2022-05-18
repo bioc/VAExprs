@@ -115,7 +115,7 @@ Dongmin Jung
 
 
 \seealso{
-SummarizedExperiment::assay, SummarizedExperiment::colData, scater::logNormCounts, gradDescent::minmaxScaling, keras::fit, keras::fit_generator, keras::compile, CatEncoders::LabelEncoder.fit, CatEncoders::transform, DeepPINCS::multiple_sampling_generator
+SummarizedExperiment::assay, SummarizedExperiment::colData, scater::logNormCounts, keras::fit, keras::fit_generator, keras::compile, CatEncoders::LabelEncoder.fit, CatEncoders::transform, DeepPINCS::multiple_sampling_generator
 }
 
 
